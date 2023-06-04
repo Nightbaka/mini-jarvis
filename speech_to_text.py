@@ -10,7 +10,7 @@ def listen(soundfile):
                                        language='en', # also available 'de', 'es'
                                        device=device)
     (read_batch, split_into_batches,
- read_audio, prepare_model_input) = utils  # see function signature for details
+    read_audio, prepare_model_input) = utils  # see function signature for details
 
     test_files = glob(soundfile)
     batches = split_into_batches(test_files, batch_size=10)

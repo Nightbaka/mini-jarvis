@@ -1,13 +1,14 @@
-import openai
-import os
-import subprocess
-from pathlib import Path
+import asyncio
+from EdgeGPT import Chatbot, ConversationStyle
+from EdgeUtils import Query
+import json
 
-def send_request(request):
-    bing_script_path = Path("bing_integration/bing.js")
-    bing_request = subprocess.run(["node", bing_script_path, request], stderr= subprocess.PIPE, stdout= subprocess.PIPE)
-    response, error = bing_request.communicate()
-    return response, error
+class QuestionHandler:
 
-if __name__ == "__main__":
-    send_request("hello world")
+    def __init__(self):
+        self.prompt = None
+
+    def ask(self, request):
+        self.prompt = Query(request)
+        return self.prompt.output
+        
