@@ -2,15 +2,13 @@ import torch
 from glob import glob
 from scipy.io.wavfile import write
 import os
+from dotenv import load_dotenv
 
 class SpeechModels:
-    _input = './prompts/sound/input.wav'
-    _output = './prompts/sound/output.wav'
-    _TTS_model_path = './models/tts_model.pt'
     
 
     @staticmethod
-    def to_text(filename = _input):
+    def to_text(filename):
         device = torch.device('cpu')
         model, decoder, utils = torch.hub.load(repo_or_dir='snakers4/silero-models',
                                         model='silero_stt',
@@ -28,7 +26,7 @@ class SpeechModels:
         return decoder(output[0])
     
     @staticmethod
-    def to_speech(text, filename=_output, saved_voice=True, model_path=_TTS_model_path):
+    def to_speech(text, filename, saved_voice=True, model_path= "./models/ts_model.pt"):
         device = torch.device('cpu')
         torch.set_num_threads(4)
         local_file = model_path
@@ -45,7 +43,7 @@ class SpeechModels:
         speaker='random'
         put_accent=False
         put_yo=True
-        voice_path = 'test_voice.pt'
+        voice_path = './models/test_voice.pt'
         if saved_voice:
             audio = model.apply_tts(text=text,
                             speaker=speaker,

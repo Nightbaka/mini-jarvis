@@ -1,14 +1,10 @@
-import keyboard, threading, SoundHandler, speech_to_text, gpt_service, text_to_speach
+import keyboard, threading, SoundHandler, gpt_service
 
 
 def ask_gpt():
     print('Recording...')
     SoundHandler.record()
     print('Done recording')
-    question = speech_to_text.listen('output.wav')
-    response = gpt_service.ask_gpt(question)
-    print(response)
-    text_to_speach.speak(response)
 
 def background():
     # Your background function here

@@ -1,20 +1,17 @@
 import pyaudio
 import wave
+import os
 
 # Set chunk size of 1024 samples per data frame
 class SoundHandler:
-    _sound_input = './prompts/sound/input.wav'
-    _sound_output = './prompts/sound/output.wav'
-    _text_input = './prompts/text/input.txt'
-    _text_output = './prompts/text/output.txt'
 
     @staticmethod
-    def record(seconds = 7, filename = _sound_input):
-        chunk = 1024 
+    def record(filename, seconds = 7):
+        chunk = 1024
         # Record at 44100 samples per second
-        sample_format = pyaudio.paInt16  
+        sample_format = pyaudio.paInt16
         channels = 2
-        fs = 44100 
+        fs = 44100
         p = pyaudio.PyAudio()
 
     # Open a new stream for recording
@@ -46,7 +43,7 @@ class SoundHandler:
         wf.close()
 
     @staticmethod
-    def play(filename = _sound_output):
+    def play(filename):
         from playsound import playsound
         playsound(filename)
         

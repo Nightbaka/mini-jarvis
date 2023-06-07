@@ -1,13 +1,11 @@
 import keyboard
 import threading
 import SoundHandler
-import speech_to_text
 
 def app():
     print('Recording...')
     SoundHandler.record(5)
     print('Done recording')
-    speech_to_text.listen('output.wav')
 
 
 
