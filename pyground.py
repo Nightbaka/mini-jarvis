@@ -6,17 +6,20 @@ import os
 
 def main():
     load_dotenv()
-    print("recording")
     sound_input = os.getenv("SOUND_INPUT")
     sound_output = os.getenv("SOUND_OUTPUT")
-    #SoundHandler.record(sound_input)
+    
+    print("recording")
+    SoundHandler.record(sound_input)
     print("done recording")
-    #question = SpeechModels.to_text()
-    #print(question)
+
+    question = SpeechModels.to_text(sound_input)
+    print(question)
+
     print("asking")
     handler = QuestionHandler()
-    response = handler.ask("Hey, bing how are you doing today?")
-    print(response)
+    response = handler.ask(question)
+    
     SpeechModels.to_speech(response, filename=  sound_output )
     print("playing")
     SoundHandler.play(sound_output) 

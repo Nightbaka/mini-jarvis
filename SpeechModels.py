@@ -3,12 +3,13 @@ from glob import glob
 from scipy.io.wavfile import write
 import os
 from dotenv import load_dotenv
+import speech_recognition as sr
 
 class SpeechModels:
     
 
     @staticmethod
-    def to_text(filename):
+    def to_text_silero(filename):
         device = torch.device('cpu')
         model, decoder, utils = torch.hub.load(repo_or_dir='snakers4/silero-models',
                                         model='silero_stt',
@@ -62,6 +63,15 @@ class SpeechModels:
             model.save_random_voice(voice_path)
         audio_np = audio.numpy()
         write(filename, sample_rate, audio_np)
+
+    @staticmethod
+    def to_text(filename):
+        recognizer = sr.Recognizer()
+        audio = sr.AudioFile(filename)
+        with audio as source:
+            audio = recognizer.record(source)
+            return recognizer.recognize_google(audio)
+
 
 if __name__ == '__main__':
     #print(SpeechModels.to_text())
