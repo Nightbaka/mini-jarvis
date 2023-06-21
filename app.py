@@ -1,6 +1,6 @@
 import keyboard
 from SoundHandler import SoundHandler
-from SpeechModels import SpeechModels
+from SpeechInterface import SpeechInterface
 from gpt_service import QuestionHandler
 from dotenv import load_dotenv
 import os
@@ -9,6 +9,7 @@ import threading
 class App:
     def __init__(self):
         load_dotenv()
+        self.speach_interface = SpeechInterface()
         self.sound_input = os.getenv("SOUND_INPUT")
         self.sound_output = os.getenv("SOUND_OUTPUT")
 
@@ -17,14 +18,14 @@ class App:
         SoundHandler.record(self.sound_input)
         print("done recording")
 
-        question = SpeechModels.to_text(self.sound_input)
+        question = self.speach_interface.to_text(self.sound_input)
         print(question)
 
         print("asking")
         handler = QuestionHandler()
         response = handler.ask(question)
         
-        SpeechModels.to_speech(response, filename = self.sound_output)
+        self.speach_interface.to_speech(response, filename = self.sound_output)
         print("playing")
         SoundHandler.play(self.sound_output) 
         print("done playing")

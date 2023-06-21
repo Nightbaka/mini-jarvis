@@ -2,31 +2,35 @@ import torch
 from glob import glob
 from scipy.io.wavfile import write
 import os
-from dotenv import load_dotenv
 import speech_recognition as sr
+from abc import ABC
 
-class SpeechModels:
+class ISpeechInterface(ABC):
+    def to_text(filename):
+        pass
+
+    def to_speach(filename):
+        pass
     
+class SpeechInterface(ISpeechInterface):
+    # def to_text_silero(filename):
+    #     device = torch.device('cpu')
+    #     model, decoder, utils = torch.hub.load(repo_or_dir='snakers4/silero-models',
+    #                                     model='silero_stt',
+    #                                     language='en',
+    #                                     device=device)
+    #     (read_batch, split_into_batches,
+    #     read_audio, prepare_model_input) = utils
 
-    @staticmethod
-    def to_text_silero(filename):
-        device = torch.device('cpu')
-        model, decoder, utils = torch.hub.load(repo_or_dir='snakers4/silero-models',
-                                        model='silero_stt',
-                                        language='en',
-                                        device=device)
-        (read_batch, split_into_batches,
-        read_audio, prepare_model_input) = utils
+    #     test_files = glob(filename)
+    #     batches = split_into_batches(test_files, batch_size=10)
+    #     input = prepare_model_input(read_batch(batches[0]),
+    #                             device=device)
 
-        test_files = glob(filename)
-        batches = split_into_batches(test_files, batch_size=10)
-        input = prepare_model_input(read_batch(batches[0]),
-                                device=device)
-
-        output = model(input)
-        return decoder(output[0])
+    #     output = model(input)
+    #     return decoder(output[0])
     
-    @staticmethod
+    
     def to_speech(text, filename, saved_voice=True, model_path= "./models/ts_model.pt"):
         device = torch.device('cpu')
         torch.set_num_threads(4)

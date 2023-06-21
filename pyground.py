@@ -1,5 +1,5 @@
 from SoundHandler import SoundHandler
-from SpeechModels import SpeechModels
+from SpeechInterface import SpeechModels
 from gpt_service import QuestionHandler
 from dotenv import load_dotenv
 import os
