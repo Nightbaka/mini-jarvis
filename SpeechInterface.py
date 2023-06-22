@@ -6,32 +6,15 @@ import speech_recognition as sr
 from abc import ABC
 
 class ISpeechInterface(ABC):
-    def to_text(filename):
+    def to_text(self,filename):
         pass
 
-    def to_speach(filename):
+    def to_speach(self,text,filename):
         pass
     
 class SpeechInterface(ISpeechInterface):
-    # def to_text_silero(filename):
-    #     device = torch.device('cpu')
-    #     model, decoder, utils = torch.hub.load(repo_or_dir='snakers4/silero-models',
-    #                                     model='silero_stt',
-    #                                     language='en',
-    #                                     device=device)
-    #     (read_batch, split_into_batches,
-    #     read_audio, prepare_model_input) = utils
-
-    #     test_files = glob(filename)
-    #     batches = split_into_batches(test_files, batch_size=10)
-    #     input = prepare_model_input(read_batch(batches[0]),
-    #                             device=device)
-
-    #     output = model(input)
-    #     return decoder(output[0])
     
-    
-    def to_speech(text, filename, saved_voice=True, model_path= "./models/ts_model.pt"):
+    def to_speech(self,text, filename, saved_voice=True, model_path= "./models/ts_model.pt"):
         device = torch.device('cpu')
         torch.set_num_threads(4)
         local_file = model_path
@@ -68,8 +51,8 @@ class SpeechInterface(ISpeechInterface):
         audio_np = audio.numpy()
         write(filename, sample_rate, audio_np)
 
-    @staticmethod
-    def to_text(filename):
+    
+    def to_text(self,filename):
         recognizer = sr.Recognizer()
         audio = sr.AudioFile(filename)
         with audio as source:
