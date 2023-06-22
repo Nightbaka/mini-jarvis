@@ -1,12 +1,13 @@
 from typing import Optional
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal, Slot, QObject
-from PySide6.QtGui import QPalette, QColor, QCloseEvent, QIcon, QAction
-from PySide6.QtWidgets import QApplication, QMenu,QMainWindow, QSystemTrayIcon, QDockWidget, QGraphicsView, QWidget, QGraphicsScene, QVBoxLayout
+from PySide6.QtGui import QPalette, QColor, QCloseEvent, QIcon, QAction, QTextDocument
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QTextEdit, QGridLayout, QMenu,QMainWindow, QSystemTrayIcon, QStackedLayout, QDockWidget, QGraphicsView, QWidget, QGraphicsScene, QVBoxLayout
 import pystray
 import PIL.Image
 import threading
 import time
+from utils import extract_code
 
 class Controler(QWidget):
     def __init__(self, on_start, on_stop):
@@ -24,51 +25,23 @@ class Controler(QWidget):
 
 
 
-class AnswerPopup(QGraphicsView):
+class AnswerPopup(QWidget):
     def __init__(self, answer):
         super().__init__()
         self.answer = answer
-        scene = AnswerScene(self.answer)
-        self.setScene(scene)
+        self.windowTitle = "Answer"
+        self.setLayout(QHBoxLayout())
+        self.text_widget = QTextEdit()
+        self.text_widget.setMarkdown(self.answer)
+        self.layout().addWidget(self.text_widget)
 
-    def copy(self):
+        self.copy_button = QtWidgets.QPushButton("Copy")
+        self.copy_button.clicked.connect(self.copy_code)
+        self.layout().addWidget(self.copy_button)
+
+    def copy_code(self):
         clipboard = QApplication.clipboard()
-        clipboard.setText(self.answer)
-
-class AnswerScene(QGraphicsScene):
-    def __init__(self, answer):
-        super().__init__()
-        self.answer = answer
-        self.addText(self.answer)
-
-class Icon2(QObject):
-        # self.icon = pystray.Icon("mini_jarvis", image, "mini-jarvis", menu=pystray.Menu(
-        #     pystray.MenuItem("Open controller", on_open),
-        #     pystray.MenuItem("End", on_exit),
-        #     pystray.MenuItem("Start", on_start),
-        #     pystray.MenuItem("Stop", on_stop)
-        # ))
-    open_controller = Signal()
-    def __init__(self, image, on_open, on_exit, on_stop, on_start):
-        super().__init__()
-        self.on_open = on_open
-        self.on_exit = on_exit
-        self.on_stop = on_stop
-        self.on_start = on_start
-        self.image = image
-
-        
-    def create_icon_and_run(self):
-        self.icon = pystray.Icon("mini_jarvis", self.image, "mini-jarvis", menu=pystray.Menu(
-            pystray.MenuItem("Open controller", self.on_open),
-            pystray.MenuItem("End", self.on_exit),
-            pystray.MenuItem("Start", self.on_start),
-            pystray.MenuItem("Stop", self.on_stop)
-        ))
-        self.icon.run()
-
-    def stop(self):
-        self.icon.stop()
+        clipboard.setText(extract_code(self.answer))
 
 class Icon():
     def __init__(self, image_path, on_open, on_exit, on_stop, on_start):

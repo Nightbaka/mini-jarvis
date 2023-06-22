@@ -6,15 +6,23 @@ import speech_recognition as sr
 from abc import ABC
 
 class ISpeechInterface(ABC):
-    def to_text(self,filename):
+    def to_text(self,filename = None):
         pass
 
-    def to_speach(self,text,filename):
+    def to_speach(self,text, filename = None):
         pass
     
 class SpeechInterface(ISpeechInterface):
+
+    def __init__(self, sound_input, sound_output):
+        self.sound_input = sound_input
+        self.sound_output = sound_output
+
     
-    def to_speech(self,text, filename, saved_voice=True, model_path= "./models/ts_model.pt"):
+    def to_speach(self, text, filename = None, saved_voice=True, model_path= "./models/ts_model.pt"):
+        if filename is None:
+            filename = self.sound_output
+        print("text to speech")
         device = torch.device('cpu')
         torch.set_num_threads(4)
         local_file = model_path
@@ -50,34 +58,14 @@ class SpeechInterface(ISpeechInterface):
             model.save_random_voice(voice_path)
         audio_np = audio.numpy()
         write(filename, sample_rate, audio_np)
+        print("done text to speech")
 
     
-    def to_text(self,filename):
+    def to_text(self,filename = None):
+        if filename is None:
+            filename = self.sound_input
         recognizer = sr.Recognizer()
         audio = sr.AudioFile(filename)
         with audio as source:
             audio = recognizer.record(source)
             return recognizer.recognize_google(audio)
-
-
-if __name__ == '__main__':
-    #print(SpeechModels.to_text())
-    device = torch.device('cpu')  # gpu also works, but our models are fast enough for CPU
-    model, decoder, utils = torch.hub.load(repo_or_dir='snakers4/silero-models',
-                                        model='silero_stt',
-                                        language='en', # also available 'de', 'es'
-                                        device=device)
-    (read_batch, split_into_batches,
-    read_audio, prepare_model_input) = utils  # see function signature for details
-
-    # download a single file in any format compatible with TorchAudio
-    torch.hub.download_url_to_file('https://opus-codec.org/static/examples/samples/speech_orig.wav',
-                                dst ='speech_orig.wav', progress=True)
-    test_files = glob('speech_orig.wav')
-    batches = split_into_batches(test_files, batch_size=10)
-    input = prepare_model_input(read_batch(batches[0]),
-                                device=device)
-
-    output = model(input)
-    for example in output:
-        print(decoder(example.cpu()))
