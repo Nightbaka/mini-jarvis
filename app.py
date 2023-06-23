@@ -14,6 +14,7 @@ from PySide6.QtCore import QThread, QObject, Signal
 from PySide6.QtGui import QAction
 import EdgeUtils
 import asyncio
+import utils
 
 
 class Jarvis(QObject):
@@ -77,11 +78,11 @@ class JarvisExecutor(QObject):
         self.response_action = QAction()
 
     def ask_gpt(self):
-        print("recording")
-        self.sound_handler.record()
-        print("done recording")
-        question = self.speach_interface.to_text()
-        # question = "Write Hello World in Python"
+        # print("recording")
+        # self.sound_handler.record()
+        # print("done recording")
+        # question = self.speach_interface.to_text()
+        question = "Can you give me a table of all Poland presidents and years they served?"
         print(question)
         response = self.question_handler.ask(question)
         self.response_output.emit(self.question_handler.prompt)
@@ -112,15 +113,14 @@ class ShowIfCodeInResponse(ResponseHandler):
     def handle_response(self, query: EdgeUtils.Query):
         response = query.output
         print(response)
-        code_blocks = response.split("```")[1:-1:2]
-        if len(code_blocks) == 0:
+        if utils.detect_table(response) or utils.detect_code(response) > 0:
+            self.show_markdown(response)
+        else:
             print("no code blocks")
             self.speech_interface.to_speach(response)
             self.sound_handler.play()
-        else:
-            self.show_code(response)
 
-    def show_code(self, code):
+    def show_markdown(self, code):
         print("showing code:",code)
         self.answer_widget = AnswerPopup(code)
         self.answer_widget.show()
