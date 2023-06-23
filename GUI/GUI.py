@@ -3,7 +3,6 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal, Slot, QObject
 from PySide6.QtGui import QPalette, QColor, QCloseEvent, QIcon, QAction, QTextDocument
 from PySide6.QtWidgets import QApplication, QHBoxLayout, QTextEdit, QGridLayout, QMenu,QMainWindow, QSystemTrayIcon, QStackedLayout, QDockWidget, QGraphicsView, QWidget, QGraphicsScene, QVBoxLayout
-import pystray
 import PIL.Image
 import threading
 import time
@@ -38,6 +37,11 @@ class AnswerPopup(QWidget):
         self.copy_button = QtWidgets.QPushButton("Copy")
         self.copy_button.clicked.connect(self.copy_code)
         self.layout().addWidget(self.copy_button)
+
+        # frameGm = self.frameGeometry()
+        # topLeftPoint = QApplication.desktop().availableGeometry().topLeft()
+        # frameGm.moveTopLeft(topLeftPoint)
+        # self.move(frameGm.topLeft())
 
     def copy_code(self):
         clipboard = QApplication.clipboard()

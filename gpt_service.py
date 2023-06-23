@@ -11,6 +11,14 @@ class QuestionHandler:
 
     def ask(self, request):
         self.prompt = Query(request)
-        return self.prompt.output
+        try:
+            text = self.prompt.output
+        except KeyError:
+            test = "Unfortunately there was an error with the request. Please try again."
+        except Exception as e:
+            test = "Unfortunate error: ```/n" + str(e) + "```"
+        finally:
+            return text
+
 
         

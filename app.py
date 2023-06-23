@@ -40,8 +40,17 @@ class Jarvis(QObject):
         self.executor.response_output.connect(self.handle_response)
         self.executor.moveToThread(self.executor_thread)
         self.executor_thread.started.connect(self.executor.start)
-        self.executor_thread.finished.connect(lambda: self.finish_running)
         self.executor_thread.start()
+        # if self.executor is None:
+        #     self.executor = JarvisExecutor()
+        #     self.executor_thread = QThread()
+        #     self.executor.response_output.connect(self.handle_response)
+        #     self.executor.moveToThread(self.executor_thread)
+        #     self.executor_thread.started.connect(self.executor.start)
+        #     self.executor_thread.start()
+        #     stop.connect(self.executor.stop)
+        # else:
+        #     self.executor.start()
 
     def finish_running(self):
         if self.executor_thread is None:
@@ -72,6 +81,7 @@ class JarvisExecutor(QObject):
         self.sound_handler.record()
         print("done recording")
         question = self.speach_interface.to_text()
+        # question = "Write Hello World in Python"
         print(question)
         response = self.question_handler.ask(question)
         self.response_output.emit(self.question_handler.prompt)
@@ -79,10 +89,9 @@ class JarvisExecutor(QObject):
 
     def start(self):
         keyboard.add_hotkey('ctrl+alt+p', self.ask_gpt)
-        keyboard.wait()
 
     def stop(self):
-        self.event.set()
+        keyboard.remove_hotkey('ctrl+alt+p')
 
 
 
@@ -124,6 +133,7 @@ class App():
     def __init__(self):
         self.app = QApplication()
         self.app.setQuitOnLastWindowClosed(False)
+        self.app.setApplicationName("Jarvis")
         self.jarvis = Jarvis()
         self.icon = Icon(
             "GUI/jarvis.png",
@@ -138,6 +148,7 @@ class App():
         self.create_icon()
         self.jarvis.run()
         self.show_controller()
+        self.controller.hide()
         self.app.exec()
 
     def create_icon(self):
@@ -166,3 +177,5 @@ class App():
 if __name__ == '__main__':
     app = App()
     app.run()
+
+    print("Hello, World!")
